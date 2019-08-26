@@ -367,3 +367,31 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 ---
+
+写在最后：
+很感谢作者开发了这么好的依赖。我自己编译过程中遇到一些问题，分享一下。
+
+首先我的环境是：
+CentOS7
+[root@huomai lua-openssl]# openssl version
+OpenSSL 1.1.1c  28 May 2019
+[root@huomai lua-openssl]# lua -v
+Lua 5.1.4  Copyright (C) 1994-2008 Lua.org, PUC-Rio
+[root@huomai lua-openssl]# luajit -v
+LuaJIT 2.1.0-beta3 -- Copyright (C) 2005-2017 Mike Pall. http://luajit.org/
+[root@huomai lua-openssl]# openresty -v
+nginx version: openresty/1.15.8.1
+
+1. 首先一定不要直接下载压缩包，会导致一些其他依赖文件夹为空。所以一定要clone。下载zip可能导致如下错误：
+[root@huomai lua-openssl]# make
+cc -fPIC   -I/usr/local/openresty/luajit/include/luajit-2.1    -Wall -Wno-unused-value -Wno-unused-function -DPTHREADS -Ideps -Ideps/lua-compat -Ideps/auxiliar -c -o src/asn1.o src/asn1.c
+In file included from src/asn1.c:11:0:
+src/openssl.h:13:22: fatal error: auxiliar.h: No such file or directory
+ #include "auxiliar.h"
+                      ^
+compilation terminated.
+make: *** [src/asn1.o] Error 1
+
+2. 因为我的环境时openresty，所以如果报找不到openssl.pc或者luajit.pc
+请使用find查找到他们，把他们添加到pkg-config的默认存放pc文件的路径
+
